@@ -14,7 +14,7 @@ git clone https://github.com/israni/ML_545_Team24.git
 
 You will have a folder on your machine, with all the files. Make any changes that you want to.
 
-2. Run these commands to push chnages to the repository.
+2. Run these commands to push changes to the repository.
 
 git add .
 
@@ -28,3 +28,6 @@ git push
 Navigate to the same folder you have things added to. Then Run:
 
 git pull
+
+Connect to AWS using SSH:
+ssh -i "giri.pem" ubuntu@ec2-34-229-10-151.compute-1.amazonaws.com
