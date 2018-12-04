@@ -2,6 +2,7 @@ import gym
 from helperfns import *
 from architecture import *
 import os
+import sys
 import tensorflow as tf
 import numpy as np
 import matplotlib as plt
@@ -20,6 +21,7 @@ if __name__=='__main__':
 	maxEpisodeLength = 50
 	loadModel = False
 	path = "./models"
+	csvFile = open(path+"/trainingData.csv", "w")
 
 	tf.reset_default_graph()
 	mainQN = networkArchitecture()
@@ -95,19 +97,17 @@ if __name__=='__main__':
 			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)
-			if(episodeNumber%1000==0):
+			if(episodeNumber%1000==0 or not (iter < maxEpisodeLength) ):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%10==0):
 				print('total Steps=',totalSteps, 'mean rewards=', np.mean(totalRewardList[-10:]), 'epsilon=',epsilon)
 
-	saver.save(sess,path,'/model'+str(episodeNumber)+'.ckpt')
+	env.close()
 
 	print("Percent of succesful episodes: " + str(sum(rList)/num_episodes) + "%")
 
-	rMat = np.resize(np.array(rList),[len(rList)//100,100])
-	rMean = np.average(rMat,1)
-	plt.plot(rMean)
-	plt.show()
+	csvFile.write(trainingData)
+	csvFile.close()
 
-	env.close()
+	
