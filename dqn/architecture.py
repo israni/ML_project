@@ -47,10 +47,12 @@ class replayMemoryBuffer():
 
 	def getSample(self, size):
 		trainBatch = random.sample(self.buffer,size) #sequence of 'size' samples chosen from self.buffer
-		trainNewStateImages = np.array([train[3] for train in trainBatch])
 		trainCurrentStateImages = np.array([train[0] for train in trainBatch])
 		trainActions = np.array([train[1] for train in trainBatch])
-		return trainCurrentStateImages,trainActions,trainNewStateImages
+		trainRewards = np.array([train[2] for train in trainBatch])
+		trainNewStateImages = np.array([train[3] for train in trainBatch])
+		trainIsTimeToReset = np.array([train[4] for train in trainBatch])
+		return trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset
 		
 
 	

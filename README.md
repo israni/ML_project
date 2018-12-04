@@ -34,3 +34,5 @@ ssh -i "giri.pem" ubuntu@ec2-34-229-10-151.compute-1.amazonaws.com
 
 Download giri.pem
 In the same folder where giri.pem is run: chmod 400 giri.pem
+
+Run trainDQN with sudo permission in python3

@@ -55,7 +55,7 @@ if __name__=='__main__':
 
 			state = phi(state) #Process states
 
-			isItTimeToReset = False
+			isTimeToReset = False
 			totalRewards = 0
 			iter = 0
 			while( iter < maxEpisodeLength):
@@ -67,29 +67,30 @@ if __name__=='__main__':
 					action = sess.run(mainQN.predict, feed_dict = {mainQN.ipFrames:[state]})[0]
 
 
-				newState, reward, isItTimeToReset = performAction(env,action)
+				newState, reward, isTimeToReset = performAction(env,action)
 				newState = phi(newState)
 
 				totalSteps = totalSteps + 1
 
-				episodeBuffer.addSample([state,action,reward,newState,isItTimeToReset],False) 
+				episodeBuffer.addSample([state,action,reward,newState,isTimeToReset],False) 
 
 				if(totalSteps > preTrainSteps):
 					if(epsilon > endEpsilon):
 						epsilon = epsilon - stepDrop
 
 					if(totalSteps%updateFreq==0):
-						trainCurrentStateImages,trainActions,trainNewStateImages = experienceBuffer.getSample(batchSize)
+						trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset = experienceBuffer.getSample(batchSize)
 						
 						targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
 						newStateActions = sess.run(targetQN.predict, feed_dict = {targetQN.opQvalues:targetOpQvalues})
 						targetQ = sess.run(targetQN.Qestimate, feed_dict = {targetQN.opQvalues:targetOpQvalues, targetQN.actions:newStateActions})
-
+						targetQ[trainIsTimeToReset] = 0
+						targetQ = trainRewards + discountFactor*targetQ
 						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
 						targetQN = mainQN
 				totalRewards = totalRewards + reward
 				state = newState
-				if(isItTimeToReset):
+				if(isTimeToReset):
 					break
 			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
