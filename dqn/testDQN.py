@@ -17,7 +17,7 @@ if __name__=='__main__':
 		env.render()
 
 	env.close()
-
+	'''
 	batchSize = 32
 	updateFreq = 4
 	discountFactor = 0.99
@@ -111,3 +111,4 @@ rMat = np.resize(np.array(rList),[len(rList)//100,100])
 rMean = np.average(rMat,1)
 plt.plot(rMean)
 plt.show()
+'''
