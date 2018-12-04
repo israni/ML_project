@@ -21,8 +21,7 @@ if __name__=='__main__':
 	maxEpisodeLength = 50
 	loadModel = False
 	path = "./models"
-	csvFile = open(path+"/trainingData.csv", "w")
-
+	
 	tf.reset_default_graph()
 	mainQN = networkArchitecture()
 	targetQN = networkArchitecture()
@@ -39,10 +38,12 @@ if __name__=='__main__':
 
 	stepCountList = []
 	totalRewardList = []
-	totalSteps = 0
-
+	episodesFinished = 0
 	if not os.path.exists(path):
 		os.makedirs(path)
+
+	csvFile = open(path+"/trainingData.csv", "w+")
+
 
 	with tf.Session() as sess:
 		sess.run(initOp)
@@ -59,6 +60,8 @@ if __name__=='__main__':
 
 			isTimeToReset = False
 			totalRewards = 0
+			totalSteps = 0
+
 			iter = 0
 			while( iter < maxEpisodeLength):
 				iter = iter + 1
@@ -82,7 +85,6 @@ if __name__=='__main__':
 
 					if(totalSteps%updateFreq==0):
 						trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset = experienceBuffer.getSample(batchSize)
-						
 						targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
 						newStateActions = sess.run(targetQN.predict, feed_dict = {targetQN.opQvalues:targetOpQvalues})
 						targetQ = sess.run(targetQN.Qestimate, feed_dict = {targetQN.opQvalues:targetOpQvalues, targetQN.actions:newStateActions})
@@ -90,14 +92,24 @@ if __name__=='__main__':
 						targetQ = trainRewards + discountFactor*targetQ
 						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
 						targetQN = mainQN
+
 				totalRewards = totalRewards + reward
 				state = newState
 				if(isTimeToReset):
+					episodesFinished = episodesFinished + 1
 					break
 			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)
-			if(episodeNumber%1000==0 or episodeNumber==numEpisodes-1):
+			if(episodeNumber%10==0 or episodeNumber==numEpisodes-1):
+				tr = np.array(totalRewardList)
+				sc = np.array(stepCountList)
+				print("TrainData: Rewards mean: %.1f±%.1f," % (tr.mean(), tr.std()), "min: %.1f," % tr.min(), "max: %.1f," % tr.max(), \
+					  "Steps mean: %.1f±%.1f," % (sc.mean(), sc.std()), "min: %.1f," % sc.min(), "max: %.1f," % sc.max() ) 
+	            trainData = str(episodeNumber) + "," + str(episodesFinished) + "," + str(tr.mean()) + "," + str(tr.std()) + "," + str(tr.min()) + "," + str(tr.max()) + "," + str(sc.mean()) + "," + str(sc.std()) + "," + str(sc.min()) + "," + str(sc.max()) +  "\n"
+            	csvFile.write(trainData)
+
+			if(episodeNumber%100==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%10==0):
@@ -105,9 +117,7 @@ if __name__=='__main__':
 
 	env.close()
 
-	print("Percent of succesful episodes: " + str(sum(rList)/num_episodes) + "%")
-
-	csvFile.write(trainingData)
+		
 	csvFile.close()
 
 	
