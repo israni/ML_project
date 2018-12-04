@@ -102,7 +102,7 @@ if __name__=='__main__':
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)		
 
-			if(episodeNumber%1000==0 or episodeNumber==numEpisodes-1):
+			if(episodeNumber%10000==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%100==0 or episodeNumber==numEpisodes-1):
