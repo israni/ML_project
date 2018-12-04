@@ -39,6 +39,7 @@ if __name__=='__main__':
 	stepCountList = []
 	totalRewardList = []
 	episodesFinished = 0
+	totalSteps = 0
 	if not os.path.exists(path):
 		os.makedirs(path)
 
@@ -60,8 +61,7 @@ if __name__=='__main__':
 
 			isTimeToReset = False
 			totalRewards = 0
-			totalSteps = 0
-
+			
 			iter = 0
 			while( iter < maxEpisodeLength):
 				iter = iter + 1
