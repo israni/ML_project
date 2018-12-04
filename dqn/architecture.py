@@ -52,7 +52,7 @@ class replayMemoryBuffer():
 		trainRewards = np.array([train[2] for train in trainBatch])
 		trainNewStateImages = np.array([train[3] for train in trainBatch])
 		trainIsTimeToReset = np.array([train[4] for train in trainBatch])
-		return trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset
+		return trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset 
 		
 
 	

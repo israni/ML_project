@@ -16,7 +16,7 @@ if __name__=='__main__':
 	startEpsilon = 1
 	endEpsilon = 0.1
 	annealingSteps = 1e6
-	numEpisodes = 500
+	numEpisodes = 500000
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
 	loadModel = False
@@ -31,7 +31,7 @@ if __name__=='__main__':
 	saver =tf.train.Saver()
 
 	trainables = tf.trainable_variables()
-	experienceBuffer= replayMemoryBuffer()
+	experienceBuffer= replayMemoryBuffer(size = 18600)
 
 	epsilon = startEpsilon
 	stepDrop = (startEpsilon - endEpsilon)/annealingSteps
@@ -53,7 +53,7 @@ if __name__=='__main__':
 			saver.restore(sess,ckpt.model_checkpoint_path)
 		for episodeNumber in range(numEpisodes):
 			print("Episode: ", episodeNumber, end='\r')
-			episodeBuffer = replayMemoryBuffer()
+			episodeBuffer = replayMemoryBuffer(size = maxEpisodeLength)
 			state = env.reset()
 
 			state = phi(state) #Process states
@@ -77,8 +77,8 @@ if __name__=='__main__':
 
 				totalSteps = totalSteps + 1
 
-				episodeBuffer.addSample([state,action,reward,newState,isTimeToReset],False) 
-
+				episodeBuffer.addSample([state,action,reward,newState,isTimeToReset],False) #105 x 80 x 4, 1, 1, 105 x 80 x 4, 1 --> (33600+1+1+33600+(1/8))*4 bytes = 67202.125*4 = 268808.5 bytes = 0.2688085 MB
+				#1 GB = 1000 MB, 0.2688085MB/sample --> 3720.1204575 samples/GB --> For 5 GB of buffer size 18600.6022875 ~ 18600 samples!
 				if(totalSteps > preTrainSteps):
 					if(epsilon > endEpsilon):
 						epsilon = epsilon - stepDrop
@@ -100,19 +100,19 @@ if __name__=='__main__':
 					break
 			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
-			totalRewardList.append(totalRewards)
-			if(episodeNumber%10==0 or episodeNumber==numEpisodes-1):
-				tr = np.array(totalRewardList)
-				sc = np.array(stepCountList)
-				print("TrainData: Rewards mean: %.1f±%.1f," % (tr.mean(), tr.std()), "min: %.1f," % tr.min(), "max: %.1f," % tr.max(),"Steps mean: %.1f±%.1f," % (sc.mean(), sc.std()), "min: %.1f," % sc.min(), "max: %.1f," % sc.max() ) 
-				trainData = str(episodeNumber) + "," + str(episodesFinished) + "," + str(tr.mean()) + "," + str(tr.std()) + "," + str(tr.min()) + "," + str(tr.max()) + "," + str(sc.mean()) + "," + str(sc.std()) + "," + str(sc.min()) + "," + str(sc.max()) +  "\n"
-				csvFile.write(trainData)
+			totalRewardList.append(totalRewards)		
 
-			if(episodeNumber%100==0 or episodeNumber==numEpisodes-1):
+			if(episodeNumber%1000==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
-			if(len(totalRewardList)%10==0):
-				print('total Steps=',totalSteps, 'mean rewards=', np.mean(totalRewardList[-10:]), 'epsilon=',epsilon)
+			if(len(totalRewardList)%100==0 or episodeNumber==numEpisodes-1):
+				tr = np.array(totalRewardList)
+				sc = np.array(stepCountList)
+				temp = np.mean(totalRewardList[-10:])
+				trainData = str(totalSteps) + "," + str(temp) + "," + str(epsilon) + "," + str(episodeNumber) + "," + str(episodesFinished) + "," + str(tr.mean()) + "," + str(tr.std()) + "," + str(tr.min()) + "," + str(tr.max()) + "," + str(sc.mean()) + "," + str(sc.std()) + "," + str(sc.min()) + "," + str(sc.max()) +  "\n"
+				print('total Steps=',totalSteps, 'mean rewards=', temp, 'epsilon=',epsilon,"TrainData: Rewards mean: %.1f±%.1f," % (tr.mean(), tr.std()), "min: %.1f," % tr.min(), "max: %.1f," % tr.max(),"Steps mean: %.1f±%.1f," % (sc.mean(), sc.std()), "min: %.1f," % sc.min(), "max: %.1f" % sc.max() ) 
+				csvFile.write(trainData)
+				
 
 	env.close()
 
