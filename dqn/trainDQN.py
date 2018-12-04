@@ -97,7 +97,7 @@ if __name__=='__main__':
 			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)
-			if(episodeNumber%1000==0 or not (iter < maxEpisodeLength) ):
+			if(episodeNumber%1000==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%10==0):
