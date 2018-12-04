@@ -35,4 +35,12 @@ ssh -i "giri.pem" ubuntu@ec2-34-229-10-151.compute-1.amazonaws.com
 Download giri.pem
 In the same folder where giri.pem is run: chmod 400 giri.pem
 
-Run trainDQN with sudo permission in python3
+To start training:
+0. Go to the relevant directory <cd ML_545_Team24>
+1. Push the existing models onto git: <git add .> <git commit -m "models ___"> <git push>
+2. Move to dqn directory: <cd dqn>
+3. Delete the models in the instance <sudo rm -r models>
+4. Change the screen using <screen -S training>
+5. Run trainDQN with sudo permission in python3 <sudo python3 trainDQN.py>. 
+6. Press ctrl+a+d to detach this screen. This will remove the screen you are seeing and show you the screen 0
+7. To go back to the training screen use <screen -r>
