@@ -16,7 +16,7 @@ if __name__=='__main__':
 	endEpsilon = 0.1
 	annealingSteps = 1e6
 	numEpisodes = 500
-	preTrainSteps = 30
+	preTrainSteps = 1600
 	maxEpisodeLength = 50
 	loadModel = False
 	path = "./models"
@@ -30,7 +30,7 @@ if __name__=='__main__':
 	saver =tf.train.Saver()
 
 	trainables = tf.trainable_variables()
-	eBuffer = replayMemoryBuffer()
+	experienceBuffer= replayMemoryBuffer()
 
 	epsilon = startEpsilon
 	stepDrop = (startEpsilon - endEpsilon)/annealingSteps
@@ -52,14 +52,15 @@ if __name__=='__main__':
 			print("Episode: ", episodeNumber, end='\r')
 			episodeBuffer = replayMemoryBuffer()
 			state = env.reset()
-			
+
 			state = phi(state) #Process states
+
 			isItTimeToReset = False
 			totalRewards = 0
 			iter = 0
 			while( iter < maxEpisodeLength):
 				iter = iter + 1
-
+				#print("iteration: ", iter)
 				if(np.random.rand(1) < epsilon or totalSteps < preTrainSteps):
 					action = np.random.randint(0,4)
 				else:
@@ -70,25 +71,27 @@ if __name__=='__main__':
 				newState = phi(newState)
 
 				totalSteps = totalSteps + 1
-				episodeBuffer.addSample(np.reshape(np.array([state,action,reward,newState,isItTimeToReset]),[1,5]))
+
+				episodeBuffer.addSample([state,action,reward,newState,isItTimeToReset],False) 
 
 				if(totalSteps > preTrainSteps):
 					if(epsilon > endEpsilon):
 						epsilon = epsilon - stepDrop
 
 					if(totalSteps%updateFreq==0):
-						trainBatch = eBuffer.getSample(batchSize)
+						trainCurrentStateImages,trainActions,trainNewStateImages = experienceBuffer.getSample(batchSize)
+						
+						targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
+						newStateActions = sess.run(targetQN.predict, feed_dict = {targetQN.opQvalues:targetOpQvalues})
+						targetQ = sess.run(targetQN.Qestimate, feed_dict = {targetQN.opQvalues:targetOpQvalues, targetQN.actions:newStateActions})
 
-						estimatedQ = sess.run(mainQN.predict, feed_dict = {mainQN.ipFrames:np.vstack(trainBatch[:,3])})
-						targetQ = sess.run(targetQN.opQvalues, feed_dict = {mainQN.ipFrames:np.vstack(trainBatch[:,3])})
-
-						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:np.vstack(trainBatch[:,0]), mainQN.Qtarget:targetQ, mainQN.actions:trainBatch[:,1]})
+						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
 						targetQN = mainQN
 				totalRewards = totalRewards + reward
 				state = newState
 				if(isItTimeToReset):
 					break
-			eBuffer.add(episodeBuffer.buffer)
+			experienceBuffer.addSample(episodeBuffer.buffer,True) #episodeBuffer is of size 5
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)
 			if(episodeNumber%1000==0):

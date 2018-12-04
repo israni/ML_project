@@ -4,7 +4,10 @@ def phi(states): #Preprocessing
 	#states = np.array(states)
 	if(len(np.shape(states))==3):
 		grayImage = np.mean(states, axis = 2).astype(np.uint8)
-		result = grayImage[::2,::2]
+		resultTemp = grayImage[::2,::2]
+		result = np.zeros((105,80,4))
+		for i in range(0,4):
+			result[:,:,i] = resultTemp
 	else:
 		result = np.zeros((105,80,4))
 		for i in range(0,4):

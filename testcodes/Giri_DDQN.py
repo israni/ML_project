@@ -47,7 +47,7 @@ class Qnetwork():
 
 		self.Q = tf.reduce_sum(tf.multiply(self.Qout, self.actions_onehot),axis = 1)
 
-		self.td_error = tf.square(self.targetQ - self.Q)
+		self.td_error = tf.square(self.targetQ - self.Q) #Total Deviation Error
 
 		self.loss = tf.reduce_mean(self.td_error)
 

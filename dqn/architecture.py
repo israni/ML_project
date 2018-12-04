@@ -16,11 +16,13 @@ class networkArchitecture():
 		self.opQvalues = slim.fully_connected(inputs=self.fc, num_outputs = 4, biases_initializer = None)
 		self.predict = tf.argmax(self.opQvalues,1)
 
-		self.Qtarget = tf.placeholder(shape=[None], dtype = tf.float32)
 		self.actions = tf.placeholder(shape=[None], dtype = tf.int32)
 		self.actions_onehot = tf.one_hot(self.actions,4, dtype = tf.float32) #second argument env.actions
 
 		self.Qestimate = tf.reduce_sum(tf.multiply(self.opQvalues,self.actions_onehot), axis = 1)
+
+		self.Qtarget = tf.placeholder(shape=[None], dtype = tf.float32)
+		
 
 		self.loss = tf.reduce_mean(tf.square(self.Qtarget-self.Qestimate))
 
@@ -29,20 +31,26 @@ class networkArchitecture():
 
 
 class replayMemoryBuffer():
-	def __init__(self, size=50000):
+	def __init__(self, size=50000): #Buffer is a simple of list of items
 		self.buffer = []
 		self.buffer_size = size
 
-	def addSample(self, newExperience):
+	def addSample(self, newExperience, flag = False):
 		totalLength = len(newExperience) + len(self.buffer)
 		if(totalLength >= self.buffer_size):
 			self.buffer[0:totalLength-self.buffer_size] = []
-		self.buffer.extend(newExperience)
+		if(flag):
+			self.buffer.extend(newExperience)
+		else:
+			self.buffer.append(newExperience)
+
 
 	def getSample(self, size):
-		print(len(self.buffer),size)
-		randomIdx = random.sample(self.buffer,size)
-		return np.reshape(np.array(randomIdx,size), [size, 5])
-
+		trainBatch = random.sample(self.buffer,size) #sequence of 'size' samples chosen from self.buffer
+		trainNewStateImages = np.array([train[3] for train in trainBatch])
+		trainCurrentStateImages = np.array([train[0] for train in trainBatch])
+		trainActions = np.array([train[1] for train in trainBatch])
+		return trainCurrentStateImages,trainActions,trainNewStateImages
+		
 
 	
