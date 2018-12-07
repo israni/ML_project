@@ -3,14 +3,18 @@ import tensorflow.contrib.slim as slim
 import random
 import numpy as np
 class networkArchitecture():
+
+	#def conv2d(inputs, num_outputs, kernel_size, stride, padding, biases_initializer):
+		#conv = tf.nn.conv2d(inputs,)
+
 	def __init__(self):
 
 		self.ipFrames = tf.placeholder(shape=[None,105,80,4], dtype=tf.float32)
 		self.processedFrames = tf.keras.layers.Lambda(lambda x: x/255.0)(self.ipFrames)
 		
-		self.conv1 = slim.conv2d(inputs=self.processedFrames, num_outputs = 32, kernel_size = [8,8], stride = [4,4], padding = 'VALID', biases_initializer=None) #ReLU is the activation by default in slim.conv2d
-		self.conv2 = slim.conv2d(inputs=self.conv1, num_outputs = 64, kernel_size = [4,4], stride = [2,2], padding = 'VALID', biases_initializer=None)
-		self.conv3 = slim.conv2d(inputs=self.conv2, num_outputs = 64, kernel_size = [3,3], stride = [1,1], padding = 'VALID', biases_initializer=None)
+		self.conv1 = slim.conv2d(inputs=self.processedFrames, num_outputs = 32, kernel_size = [8,8], stride = [4,4], padding = 'VALID', activation_fn=tf.nn.leaky_relu, biases_initializer=None) #bias_intializer=tf.constant_initializer(0.1) 
+		self.conv2 = slim.conv2d(inputs=self.conv1, num_outputs = 64, kernel_size = [4,4], stride = [2,2], padding = 'VALID', activation_fn=tf.nn.leaky_relu, biases_initializer=None)
+		self.conv3 = slim.conv2d(inputs=self.conv2, num_outputs = 64, kernel_size = [3,3], stride = [1,1], padding = 'VALID', activation_fn=tf.nn.leaky_relu,biases_initializer=None)
 		self.conv3Flattened = slim.flatten(self.conv3)
 		self.fc = slim.fully_connected(inputs=self.conv3Flattened, num_outputs = 512, biases_initializer=None)
 		self.opQvalues = slim.fully_connected(inputs=self.fc, num_outputs = 4, biases_initializer = None)

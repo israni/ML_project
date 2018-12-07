@@ -19,7 +19,10 @@ if __name__=='__main__':
 	numEpisodes = 500000
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
-	loadModel = False
+	loadModel = True
+	savedModelPath = "./modelSet1"
+	episodeNumber = 10000
+	savedFilePath = savedModelPath+'/model'+str(episodeNumber)+'.ckpt'
 	path = "./models"
 	
 	tf.reset_default_graph()
@@ -50,8 +53,7 @@ if __name__=='__main__':
 		sess.run(initOp)
 		if(loadModel):
 			print('Loading Model...')
-			ckpt = tf.train.get_checkpoint_state(path)
-			saver.restore(sess,ckpt.model_checkpoint_path)
+			saver.restore(sess,savedFilePath)
 		for episodeNumber in range(numEpisodes):
 			print("Episode: ", episodeNumber, end='\r')
 			episodeBuffer = replayMemoryBuffer(size = maxEpisodeLength)

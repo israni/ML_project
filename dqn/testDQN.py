@@ -7,7 +7,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib as plt
 
-path = "./models"
+path = "./modelSet1"
 
 def plotData():
 	csvFile = open(path+"/trainingData.csv", "r")
@@ -23,7 +23,7 @@ if __name__=='__main__':
 
 	initOp = tf.global_variables_initializer()
 	
-	episodeNumber = 400
+	episodeNumber = 30000
 	
 	filePath = path+'/model'+str(episodeNumber)+'.ckpt'
 
@@ -42,7 +42,7 @@ if __name__=='__main__':
 			action = sess.run(mainQN.predict, feed_dict = {mainQN.ipFrames:[state]})[0]
 			state, reward, isTimeToReset = performAction(env,action)
 			state = phi(state)
-			print(reward,isTimeToReset)
+			print(action,reward,isTimeToReset)
 			env.render()
 		
 
