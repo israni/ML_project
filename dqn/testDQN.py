@@ -23,7 +23,7 @@ if __name__=='__main__':
 
 	initOp = tf.global_variables_initializer()
 	
-	episodeNumber = 20000
+	episodeNumber = 10000
 	
 	filePath = path+'/model'+str(episodeNumber)+'.ckpt'
 
