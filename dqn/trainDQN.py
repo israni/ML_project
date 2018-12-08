@@ -20,8 +20,8 @@ if __name__=='__main__':
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
 	loadModel = True
-	savedModelPath = "./modelSet1"
-	episodeNumber = 10000
+	savedModelPath = "./modelSet2"
+	episodeNumber = 20000
 	savedFilePath = savedModelPath+'/model'+str(episodeNumber)+'.ckpt'
 	path = "./models"
 	
@@ -104,7 +104,7 @@ if __name__=='__main__':
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)		
 
-			if(episodeNumber%10000==0 or episodeNumber==numEpisodes-1):
+			if(episodeNumber%5000==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%100==0 or episodeNumber==numEpisodes-1):
