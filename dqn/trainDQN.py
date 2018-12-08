@@ -85,14 +85,14 @@ if __name__=='__main__':
 					if(epsilon > endEpsilon):
 						epsilon = epsilon - stepDrop
 
+					trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset = experienceBuffer.getSample(batchSize)
+					targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
+					newStateActions = sess.run(targetQN.predict, feed_dict = {targetQN.opQvalues:targetOpQvalues})
+					targetQ = sess.run(targetQN.Qestimate, feed_dict = {targetQN.opQvalues:targetOpQvalues, targetQN.actions:newStateActions})
+					targetQ[trainIsTimeToReset] = 0
+					targetQ = trainRewards + discountFactor*targetQ
+					_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
 					if(totalSteps%updateFreq==0):
-						trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset = experienceBuffer.getSample(batchSize)
-						targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
-						newStateActions = sess.run(targetQN.predict, feed_dict = {targetQN.opQvalues:targetOpQvalues})
-						targetQ = sess.run(targetQN.Qestimate, feed_dict = {targetQN.opQvalues:targetOpQvalues, targetQN.actions:newStateActions})
-						targetQ[trainIsTimeToReset] = 0
-						targetQ = trainRewards + discountFactor*targetQ
-						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
 						targetQN = mainQN
 
 				totalRewards = totalRewards + reward
