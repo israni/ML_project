@@ -27,11 +27,14 @@ class networkArchitecture():
 
 		self.Qtarget = tf.placeholder(shape=[None], dtype = tf.float32)
 		
+		self.loss = tf.losses.mean_squared_error(self.Qtarget,self.Qestimate)
+		self.alternateLoss = tf.losses.huber_loss(self.Qtarget,self.Qestimate)
 
-		self.loss = tf.reduce_mean(tf.square(self.Qtarget-self.Qestimate))
-
-		self.trainer = tf.train.RMSPropOptimizer(learning_rate=0.00025, epsilon=0.01)#tf.train.AdamOptimizer(learning_rate=0.0001) 0.00025
+		self.trainer = tf.train.RMSPropOptimizer(learning_rate=0.00025, epsilon=0.01)
+		
 		self.trainingStep = self.trainer.minimize(self.loss)
+		self.alternateTrainingStep = self.trainer.minimize(self.alternateLoss)
+		
 
 
 class replayMemoryBuffer():

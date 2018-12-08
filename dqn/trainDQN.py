@@ -19,17 +19,16 @@ if __name__=='__main__':
 	numEpisodes = 500000
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
-	loadModel = True
+	loadModel = False
 	savedModelPath = "./modelSet2"
 	episodeNumber = 20000
 	savedFilePath = savedModelPath+'/model'+str(episodeNumber)+'.ckpt'
-	targetUpdateFreq = 20
+	targetUpdateFreq = 10000 #steps/actions
 	path = "./models"
 	
 	tf.reset_default_graph()
 	mainQN = networkArchitecture()
 	targetQN = networkArchitecture()
-
 	initOp = tf.global_variables_initializer()
 
 	saver =tf.train.Saver()
@@ -93,9 +92,9 @@ if __name__=='__main__':
 						targetQ[trainIsTimeToReset] = 0
 						targetQ = trainRewards + discountFactor*targetQ
 						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
-						if(totalSteps%targetUpdateFreq==0):
-							targetQN = mainQN
-
+					if(totalSteps%targetUpdateFreq==0):
+						updateTargetModel(sess)
+	
 				totalRewards = totalRewards + reward
 				state = newState
 				if(isTimeToReset):
