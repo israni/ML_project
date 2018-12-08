@@ -15,7 +15,7 @@ if __name__=='__main__':
 	discountFactor = 0.99
 	startEpsilon = 1
 	endEpsilon = 0.1
-	annealingSteps = 1e4
+	annealingSteps = 1e6
 	numEpisodes = 500000
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
