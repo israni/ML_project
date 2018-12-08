@@ -30,12 +30,12 @@ class networkArchitecture():
 
 		self.loss = tf.reduce_mean(tf.square(self.Qtarget-self.Qestimate))
 
-		self.trainer = tf.train.AdamOptimizer(learning_rate=0.0001)
+		self.trainer = tf.train.RMSPropOptimizer(learning_rate=0.00025, epsilon=0.01)#tf.train.AdamOptimizer(learning_rate=0.0001) 0.00025
 		self.trainingStep = self.trainer.minimize(self.loss)
 
 
 class replayMemoryBuffer():
-	def __init__(self, size=50000): #Buffer is a simple of list of items
+	def __init__(self, size=50000):  #Buffer is a simple of list of items
 		self.buffer = []
 		self.buffer_size = size
 
