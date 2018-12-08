@@ -20,9 +20,10 @@ if __name__=='__main__':
 	preTrainSteps = 1600
 	maxEpisodeLength = 50
 	loadModel = True
-	savedModelPath = "./modelSet1"
-	episodeNumber = 10000
+	savedModelPath = "./modelSet2"
+	episodeNumber = 20000
 	savedFilePath = savedModelPath+'/model'+str(episodeNumber)+'.ckpt'
+	targetUpdateFreq = 20
 	path = "./models"
 	
 	tf.reset_default_graph()
@@ -84,7 +85,6 @@ if __name__=='__main__':
 				if(totalSteps > preTrainSteps):
 					if(epsilon > endEpsilon):
 						epsilon = epsilon - stepDrop
-
 					if(totalSteps%updateFreq==0):
 						trainCurrentStateImages,trainActions,trainRewards,trainNewStateImages,trainIsTimeToReset = experienceBuffer.getSample(batchSize)
 						targetOpQvalues = sess.run(targetQN.opQvalues, feed_dict = {targetQN.ipFrames:trainNewStateImages})
@@ -93,7 +93,8 @@ if __name__=='__main__':
 						targetQ[trainIsTimeToReset] = 0
 						targetQ = trainRewards + discountFactor*targetQ
 						_ = sess.run(mainQN.trainingStep, feed_dict = {mainQN.ipFrames:trainCurrentStateImages, mainQN.Qtarget:targetQ, mainQN.actions:trainActions})
-						targetQN = mainQN
+						if(totalSteps%targetUpdateFreq==0):
+							targetQN = mainQN
 
 				totalRewards = totalRewards + reward
 				state = newState
@@ -104,7 +105,7 @@ if __name__=='__main__':
 			stepCountList.append(iter)
 			totalRewardList.append(totalRewards)		
 
-			if(episodeNumber%10000==0 or episodeNumber==numEpisodes-1):
+			if(episodeNumber%5000==0 or episodeNumber==numEpisodes-1):
 				saver.save(sess,path+'/model'+str(episodeNumber)+'.ckpt')
 				print("model has been saved")
 			if(len(totalRewardList)%100==0 or episodeNumber==numEpisodes-1):

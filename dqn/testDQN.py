@@ -7,7 +7,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib as plt
 
-path = "./modelSet1"
+path = "./models"
 
 def plotData():
 	csvFile = open(path+"/trainingData.csv", "r")
@@ -23,7 +23,7 @@ if __name__=='__main__':
 
 	initOp = tf.global_variables_initializer()
 	
-	episodeNumber = 30000
+	episodeNumber = 10000
 	
 	filePath = path+'/model'+str(episodeNumber)+'.ckpt'
 
