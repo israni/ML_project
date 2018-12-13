@@ -1,3 +1,6 @@
 [submodule "gym"]
 	path = gym
 	url = https://github.com/openai/gym.git
+[submodule "DQN/gym"]
+	path = DQN/gym
+	url = https://github.com/openai/gym.git
