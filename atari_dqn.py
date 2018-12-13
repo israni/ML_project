@@ -1,7 +1,13 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute
+import gym
 
-num_actions = 4
+
+# Get the environment from gym
+env = gym.make('Breakout-v0')
+num_actions = env.action_space.n
+
+print(num_actions)
 
 INPUT_SHAPE = (84, 84)
 WINDOW_LENGTH = 4
