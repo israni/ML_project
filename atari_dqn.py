@@ -1,7 +1,15 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute
 import gym
+import argparse
 
+
+# Use argparse to pass in arguments to the python file
+p = argparse.ArgumentParser()
+p.add_argument('--env_name', type=str, default='Breakout-v0')
+args = p.parse_args()
+
+print (args.env_name)
 
 # Get the environment from gym
 env = gym.make('Breakout-v0')
