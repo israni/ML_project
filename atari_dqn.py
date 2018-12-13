@@ -7,9 +7,12 @@ import argparse
 # Use argparse to pass in arguments to the python file
 p = argparse.ArgumentParser()
 p.add_argument('--env_name', type=str, default='Breakout-v0')
+p.add_argument('--debug', type = bool, default= 'True')
 args = p.parse_args()
 
 print (args.env_name)
+if(args.debug):
+	print(args.debug)
 
 # Get the environment from gym
 env = gym.make('Breakout-v0')
