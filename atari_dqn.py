@@ -10,6 +10,7 @@ input_shape = INPUT_SHAPE + (WINDOW_LENGTH,)
 print(input_shape)
 
 model = Sequential()
+model.add(Permute((1, 2, 3), input_shape=input_shape))
 model.add(Convolution2D(32, (8, 8), strides=(4, 4)))
 model.add(Activation('relu'))
 model.add(Convolution2D(64, (4, 4), strides=(2, 2)))
