@@ -10,16 +10,16 @@ p.add_argument('--env_name', type=str, default='Breakout-v0')
 p.add_argument('--debug', type = bool, default= 'True')
 args = p.parse_args()
 
-if(args.debug):
-	print ('debug mode')
-	print ('env-name:', args.env_name)
 
 # Get the environment from gym
-env = gym.make('Breakout-v0')
+env = gym.make(args.env_name)
 num_actions = env.action_space.n
 
-if(args.debug):
-	print('num_actions:',num_actions)
+env.reset()
+for _ in range(1000):
+    env.render()
+    env.step(env.action_space.sample()) # take a random action
+
 
 INPUT_SHAPE = (84, 84)
 WINDOW_LENGTH = 4
@@ -27,6 +27,9 @@ WINDOW_LENGTH = 4
 input_shape = INPUT_SHAPE + (WINDOW_LENGTH,)
 
 if(args.debug):
+	print ('debug mode')
+	print ('env-name:', args.env_name)
+	print('num_actions:',num_actions)
 	print('input_shape', input_shape)
 
 model = Sequential()
