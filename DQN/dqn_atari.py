@@ -6,18 +6,7 @@ from PIL import Image
 import numpy as np
 import gym
 
-from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute
-from keras.optimizers import Adam
-import keras.backend as K
-
-from keras.models import model_from_config, Sequential, Model, model_from_config
-import keras.optimizers as optimizers
-import keras.backend as K
-from keras.layers import Lambda, Input, Layer, Dense
-
-from keras.callbacks import History
 from copy import deepcopy
-
 from collections import deque, namedtuple
 import warnings
 import random
@@ -26,7 +15,12 @@ import json
 from tempfile import mkdtemp
 
 from keras import __version__ as KERAS_VERSION
-from keras.callbacks import Callback as KerasCallback, CallbackList as KerasCallbackList
+from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute, Lambda, Input, Layer, Dense
+import keras.optimizers as optimizers
+from keras.optimizers import Adam
+import keras.backend as K
+from keras.models import model_from_config, Sequential, Model, model_from_config
+from keras.callbacks import Callback as History,KerasCallback, CallbackList as KerasCallbackList
 from keras.utils.generic_utils import Progbar
 
 
