@@ -3,7 +3,7 @@
 AWS Instance Account ID or Alias:- 403952610190
 
 Password: 24
-
+Youtube Videos: https://www.youtube.com/playlist?list=PL8mN2wFvnXYwWHCZqGeTZn3LGLO3_cIO_
 Github repository: https://github.com/israni/ML_545_Team24.git
 
     To clone initially: Navigate to a folder on your PC. git clone https://github.com/israni/ML_project.git
