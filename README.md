@@ -6,7 +6,7 @@ Password: 24
 
 Github repository: https://github.com/israni/ML_545_Team24.git
 
-    To clone initially: Navigate to a folder on your PC. git clone https://github.com/israni/ML_545_Team24.git
+    To clone initially: Navigate to a folder on your PC. git clone https://github.com/israni/ML_project.git
 
 You will have a folder on your machine, with all the files. Make any changes that you want to.
 
