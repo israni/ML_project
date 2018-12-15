@@ -1,6 +1,6 @@
 # ML_project
 
-Youtube Videos: https://www.youtube.com/playlist?list=PL8mN2wFvnXYwWHCZqGeTZn3LGLO3_cIO_
+Youtube Videos: https://www.youtube.com/playlist?list=PL8mN2wFvnXYwWHCZqGeTZn3LGLO3_cIO_ (hyperlink may not work, please copy and paste the url)
 
 AWS Instance Account ID or Alias:- 403952610190
 
