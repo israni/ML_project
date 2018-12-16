@@ -2,6 +2,7 @@
 
 Youtube Videos: https://www.youtube.com/playlist?list=PL8mN2wFvnXYwWHCZqGeTZn3LGLO3_cIO_ (hyperlink may not work, please copy and paste the url)
 Effort: The videos that are shared are obtained after several trials and failures (hundres of hours of training- WASTED!), but it finally worked and helped us learn a lot! Hope you enjoy it! 
+
 For more information please contact-
 Giridharan kumaravelu (girikum@umich.edu) - A2C implementation and discussion
 Sagar Israni (israni@umich.edu) - DQN implementation and discussion
